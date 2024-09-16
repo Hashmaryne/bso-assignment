@@ -1,0 +1,37 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Astro build output
+/.astro
+/dist
+/.vercel
+
+# Strapi specific
+/.cache
+/.tmp
+/build
+/public/uploads
+
+# Environment variables
+.env
+.env.*.local
+.env.local
+
+# Local IDE settings
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Service Worker cache
+/service-worker.js.map

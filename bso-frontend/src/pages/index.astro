@@ -1,0 +1,71 @@
+---
+import ProductCard from '../components/ProductCard.astro';
+import '../styles/main.css';
+import Navbar from '../components/NavBar.astro';
+
+interface Product {
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+}
+
+const fetchProducts = async (): Promise<Product[]> => {
+  try {
+    const res = await fetch('http://localhost:1337/api/products?populate=Image');
+    if (!res.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await res.json();
+    
+    // Log the data to inspect its structure
+    console.log('Fetched data:', data);
+
+    // Extract products from the response
+    const products = data.data.map((item: any) => ({
+      id: item.id,
+      title: item.attributes.Title,
+      price: item.attributes.Price,
+	  image: item.attributes.Image, 
+    })) as Product[];
+	console.log(products)
+    
+    return products;
+  } catch (error) {
+    console.error('Failed to fetch products:', error);
+    return []; 
+  }
+};
+
+const products: Product[] = await fetchProducts();
+---
+<html>
+  <head>
+    <title>Product Catalog</title>
+  </head>
+  <body>
+	<Navbar />
+    <h1>Product Catalog</h1>
+    <div class="product-grid">
+		{products.map((product) => (
+			<ProductCard product={product} />
+		  ))}
+    </div>
+  </body>
+</html>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js').then(
+        (registration) => {
+          console.log('ServiceWorker registered with scope:', registration.scope);
+        },
+        (err) => {
+          console.error('ServiceWorker registration failed:', err);
+        }
+      );
+    });
+  }
+</script>
+

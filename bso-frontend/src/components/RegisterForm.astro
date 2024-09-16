@@ -1,0 +1,58 @@
+<form id="registerForm">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" required />
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required />
+
+  <button type="submit">Register</button>
+</form>
+<script>
+  document
+    .getElementById("registerForm")
+    ?.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const formElement = event.target as HTMLFormElement | null;
+
+      if (formElement) {
+        const formData = new FormData(formElement);
+
+        // Log FormData entries
+        const formDataObject: { [key: string]: FormDataEntryValue } = {};
+        for (const [key, value] of formData.entries()) {
+          formDataObject[key] = value;
+        }
+        console.log(JSON.stringify(formDataObject));
+        try {
+          const response = await fetch(
+            "http://localhost:1337/api/auth/local/register",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formDataObject),
+            },
+          );
+          console.log(response);
+
+          if (response.ok) {
+            const responseData = await response.json();
+            const token = responseData.jwt;
+              const userId = responseData.user.id;
+              localStorage.setItem("authToken", token);
+              localStorage.setItem("userID", userId);
+            window.location.href = "/";
+          }
+        } catch (error) {
+          console.error("Error submitting the form:", error);
+        }
+      } else {
+        console.error("Form element not found.");
+      }
+    });
+</script>

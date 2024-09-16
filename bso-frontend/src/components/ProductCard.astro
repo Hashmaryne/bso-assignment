@@ -1,0 +1,36 @@
+---
+const { product } = Astro.props;
+---
+
+<div class="product-card">
+  <img
+    src={`http://localhost:1337${product.image.data[0].attributes.url}`}
+    alt={product.title}
+  />
+  <h2>{product.title}</h2>
+  <p>{product.price}</p>
+  <button id="addToCart">Add to Cart</button>
+</div>
+
+<script define:vars={{ product }}>
+  //console.log(product.id)
+  const id = localStorage.getItem("userID");
+  console.log(id);
+  const bearerToken = `Bearer ` + localStorage.getItem("authToken");
+  console.log(bearerToken);
+  const data = {Cart: product.id,}
+  console.log(JSON.stringify(data));
+  document
+    .getElementById("addToCart")
+    ?.addEventListener("click", async function () {
+      const response = await fetch(`http://localhost:1337/api/users/${id}/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: bearerToken,
+        },
+        body: JSON.stringify(data)
+      });
+      console.log(response);
+    });
+</script>

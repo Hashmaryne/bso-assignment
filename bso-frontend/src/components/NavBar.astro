@@ -1,0 +1,91 @@
+---
+// src/components/Navbar.astro
+---
+
+<nav class="navbar">
+    <ul>
+        <li><a href="/">Product Catalog</a></li>
+        <li id="loginButton"><a href="/login">Login</a></li>
+        <li id="registerButton"><a href="/register">Register</a></li>
+        <button id="logoutButton" class="hidden"
+            >Logout</button
+        >
+    </ul>
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const authToken = localStorage.getItem("authToken");
+
+        const registerButton = document.getElementById("registerButton");
+        const loginButton = document.getElementById("loginButton");
+        const logoutButton = document.getElementById("logoutButton");
+
+        // Update button visibility based on authentication state
+        if (registerButton) {
+            registerButton.classList.toggle("hidden", !!authToken);
+        }
+        if (loginButton) {
+            loginButton.classList.toggle("hidden", !!authToken);
+        }
+        if (logoutButton) {
+            logoutButton.classList.toggle("hidden", !authToken);
+        }
+
+        if (logoutButton) {
+            logoutButton.addEventListener("click", async function () {
+                try {
+                
+                    localStorage.removeItem("authToken");
+                    sessionStorage.removeItem("authToken"); // If you use sessionStorage as well
+
+                    // Update UI
+                    if (registerButton)
+                        registerButton.classList.remove("hidden");
+                    if (loginButton) loginButton.classList.remove("hidden");
+                    if (logoutButton) logoutButton.classList.add("hidden");
+
+                    // Redirect user
+                    window.location.href = "/login"; // Or any other page you prefer
+                } catch (error) {
+                    console.error("Error logging out:", error);
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+    .navbar {
+        background-color: #60a5fa; /* Light blue */
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .hidden {
+        display: none;
+    }
+    .navbar ul {
+        list-style: none;
+        display: flex;
+        justify-content: space-around;
+        margin: 0;
+        padding: 0;
+    }
+
+    .navbar ul li {
+        display: inline;
+    }
+
+    .navbar ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar ul li a:hover {
+        background-color: #93c5fd; /* Even lighter blue on hover */
+    }
+</style>
